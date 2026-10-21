@@ -18,8 +18,8 @@ Repositori ini berisi dokumen **Software Requirements Specification (SRS)** untu
 | :---: | :--- | :---: | :--- |
 | 1 | **Dieria Febrianti** | `251572010043` | Business Analyst |
 | 2 | **Naisyra Mazeela Putri Yusman** | `251572010027` | Data Analyst / Owner Repository |
-| 3 | **M. Jusan Bahrudin** | `251572010022` | Lead Developer (Full Stack) |
-| 4 | **Muhamad Fuadi Ma'suf** | `251572010035` | Core Developer (Full Stack) |
+| 3 | **Muhamad Fuadi Ma'suf** | `251572010035` | Lead Developer (Full Stack) |
+| 4 | **M. Jusan Bahrudin** | `251572010022` | Core Developer (Full Stack) |
 
 ---
 
