@@ -13,7 +13,7 @@ Repositori ini berisi dokumen **Software Requirements Specification (SRS)** untu
 
 ---
 
-## 👥 Anggota Kelompok 6
+## 👥 Anggota Kelompok 4
 | No | Nama | NPM | Peran / Kontribusi |
 | :---: | :--- | :---: | :--- |
 | 1 | **Dieria Febrianti** | `251572010043` | Business Analyst |
