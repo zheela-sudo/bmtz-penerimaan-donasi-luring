@@ -159,6 +159,7 @@ graph TB
 ```
 
 #### 2.2.2 Notasi Standar XML (AS-IS BPMN 2.0 XML)
+
 Berikut adalah representasi proses bisnis berjalan saat ini (*AS-IS*) dalam notasi XML BPMN 2.0 yang dapat dibuka pada tool `demo.bpmn.io`:
 
 ```xml
@@ -352,8 +353,6 @@ Berikut adalah representasi proses bisnis berjalan saat ini (*AS-IS*) dalam nota
 | **IF-03** | Sub-Sistem Relawan | Inbound | JSON / REST API | 2000ms | Cache Local 24 Jam |
 | **IF-04** | Sub-Sistem Rekonsiliasi | Outbound | JSON Batch API | 10000ms | Manual Retry Log |
 
----
-
 ### 3.2 Kebutuhan Fungsional (Functional Requirements)
 
 | Requirement ID | Deskripsi Kebutuhan Fungsional | Prioritas | User Story Ref | Acceptance Criteria (Given-When-Then) |
@@ -365,24 +364,16 @@ Berikut adalah representasi proses bisnis berjalan saat ini (*AS-IS*) dalam nota
 | **FR-005** | Sistem harus memicu penerbitan Bukti Donasi Elektronik (e-Receipt) WhatsApp jika nomor kontak terisi. | **Should Have** | Donatur | **Given** transaksi status `SYNCED` & nomor WA terisi, **When** sync selesai, **Then** sistem memanggil API Notification Gateway untuk mengirim e-receipt. |
 | **FR-006** | Sistem harus menyajikan Laporan Penutupan Booth (*Closing Report*) per sesi kasir & per event. | **Must Have** | Admin Booth | **Given** sesi booth ditutup, **When** laporan dibuka, **Then** sistem menampilkan total tunai, QRIS, EDC, total selisih, dan rincian transaksi. |
 
----
-
 ### 3.3 Kebutuhan Usabilitas (Usability Requirements)
-
 * **NFR-USE-01 (Input Speed):** Pencatatan donasi tunai tanpa data donatur harus dapat diselesaikan dalam maksimal 3 kali ketukan / $< 5$ detik.
 * **NFR-USE-02 (Persistent Network Status):** Indikator koneksi (Online/Offline) dan jumlah antrean lokal yang belum tersinkron wajib tampil persisten di bar atas aplikasi.
 * **NFR-USE-03 (Contextual Error Messages):** Form input wajib menampilkan pesan validasi kontekstual yang jelas (misal: "Nominal minimum donasi adalah Rp 1.000").
 
----
-
 ### 3.4 Kebutuhan Kinerja (Performance Requirements)
-
 * **NFR-PER-01 (Local Write Speed):** Waktu simpan transaksi donasi ke IndexedDB lokal client $< 100\text{ ms}$.
 * **NFR-PER-02 (Offline Storage Capacity):** Storage lokal browser sanggup menyimpan minimal **5.000 transaksi luring** tanpa *crash*.
 * **NFR-PER-03 (Batch Sync Throughput):** Backend sanggup memproses **100 transaksi luring per detik** saat proses sinkronisasi masal serentak.
 * **NFR-PER-04 (API Latency):** Latensi respons backend untuk transaksi single $< 500\text{ ms}$ pada persentil 95 (P95).
-
----
 
 ### 3.5 Kamus Data & Validasi (Logical Database Requirements)
 
@@ -410,11 +401,11 @@ Berikut adalah representasi proses bisnis berjalan saat ini (*AS-IS*) dalam nota
 | `handover_stage` | `VARCHAR(30)` | Enum | No | Values: `OFFICER_TO_COORD`, `COORD_TO_FINANCE` | Tahap serah terima berjenjang. |
 | `from_user_id` | `UUID` | Foreign Key | No | User ID penyerah | ID Petugas / Koordinator penyerah. |
 | `to_user_id` | `UUID` | Foreign Key | No | User ID penerima | ID Koordinator / Keuangan penerima. |
-| `system_calculated_amount` | `DECIMAL(18,2)`| Column | No | Total sum of `CASH` donations in session | Total kas menurut catatan log sistem. |
-| `physical_cash_amount` | `DECIMAL(18,2)`| Column | No | Min value: $0,00$ | Total kas tunai fisik yang dihitung. |
-| `discrepancy_amount` | `DECIMAL(18,2)`| Column | No | Formula: `physical_cash_amount` - `system_calculated_amount` | Nilai selisih kas fisik vs sistem. |
+| `system_calculated_amount` | `DECIMAL(18,2)` | Column | No | Total sum of `CASH` donations in session | Total kas menurut catatan log sistem. |
+| `physical_cash_amount` | `DECIMAL(18,2)` | Column | No | Min value: $0,00$ | Total kas tunai fisik yang dihitung. |
+| `discrepancy_amount` | `DECIMAL(18,2)` | Column | No | Formula: `physical_cash_amount` - `system_calculated_amount` | Nilai selisih kas fisik vs sistem. |
 | `discrepancy_reason` | `TEXT` | Column | Yes | Mandatory if `discrepancy_amount` $\neq 0$ | Alasan/catatan penjelas selisih. |
-| `confirmation_pin_hash` | `VARCHAR(255)`| Column | No | Hash PIN otentikasi penerima | Bukti otentikasi penerima. |
+| `confirmation_pin_hash` | `VARCHAR(255)` | Column | No | Hash PIN otentikasi penerima | Bukti otentikasi penerima. |
 | `created_at` | `TIMESTAMPTZ` | Column | No | Default `NOW()` | Waktu berita acara dibuat. |
 
 #### 3. Entitas: `booth_sessions` (Sesi Operasional Booth)
@@ -428,10 +419,7 @@ Berikut adalah representasi proses bisnis berjalan saat ini (*AS-IS*) dalam nota
 | `closed_at` | `TIMESTAMPTZ` | Column | Yes | Must be $\ge$ `opened_at` | Waktu penutupan sesi booth. |
 | `session_status` | `VARCHAR(20)` | Enum | No | Values: `OPEN`, `CLOSED`, `RECONCILED` | Status siklus sesi booth. |
 
----
-
 ### 3.6 Standard Kepatuhan PDP & Keamanan (Attributes)
-
 * **3.6.1 Data Protection (UU PDP No. 27/2022):** Kontak donatur bersifat opsional. Data lokal di IndexedDB dienkripsi dengan AES-256-GCM dan dibersihkan otomatis begitu status transaksi `SYNCED`.
 * **3.6.2 Security in Transit & Rest:** Seluruh API menggunakan HTTPS / TLS 1.3. Password dan PIN di-hash menggunakan Argon2id atau BCrypt (cost factor $\ge 10$).
 * **3.6.3 Reliability & Zero Loss:** Kegagalan koneksi saat sync berlangsung tidak boleh merusak data lokal; sistem akan melakukan rollback ke status `PENDING` untuk dicoba ulang.
@@ -463,7 +451,6 @@ Berikut adalah representasi proses bisnis berjalan saat ini (*AS-IS*) dalam nota
 | **OI-04** | Apakah QRIS yang digunakan bersifat statis atau dinamis per transaksi? | TBD (Wawancara Minggu 2) |
 
 ### Appendix B: Candidate Change Requests (Kandidat CR Proses To-Be)
-
 * **CR-CAND-01 (Otomasi QRIS Dinamis):** Mengganti QRIS Statis manual dengan QRIS Dinamis API Artivisi langsung di layar tablet booth (Diajukan pada Perancangan Minggu 5).
 * **CR-CAND-02 (Bluetooth POS Thermal Printer):** Fitur cetak struk nota fisik langsung di lokasi booth untuk donatur sepuh (Kandidat Improvement Roadmap).
 
